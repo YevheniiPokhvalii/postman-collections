@@ -1,0 +1,1218 @@
+{
+	"info": {
+		"_postman_id": "d0fc1883-3cf6-47fc-ac57-cbd8c994aa0b",
+		"name": "EDP delete apps CRs jenkins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9427019"
+	},
+	"item": [
+		{
+			"name": "CodebaseBranches",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"codebaseBranchNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(codebaseBranchNames)\r",
+							"pm.collectionVariables.set(\"codebase_branch_names\", codebaseBranchNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CodebaseBranches",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"codebase_branch_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/codebasebranches/' + name,\r",
+							"        method: 'PATCH',\r",
+							"        header: 'Content-Type:application/merge-patch+json',\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: '{\"metadata\":{\"finalizers\":null}}'\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/merge-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"metadata\":{\r\n        \"finalizers\":null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CodebaseBranches",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"codebase_branch_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/codebasebranches/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Codebases",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"codebaseNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(codebaseNames)\r",
+							"pm.collectionVariables.set(\"codebase_names\", codebaseNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Codebases",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"codebase_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/codebases/' + name,\r",
+							"        method: 'PATCH',\r",
+							"        header: 'Content-Type:application/merge-patch+json',\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: '{\"metadata\":{\"finalizers\":null}}'\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/merge-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"metadata\":{\r\n        \"finalizers\":null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Codebases",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"codebase_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/codebases/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CodebaseImageStreams",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"codebaseImageStreamNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(codebaseImageStreamNames)\r",
+							"pm.collectionVariables.set(\"codebase_image_stream_names\", codebaseImageStreamNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebaseimagestreams/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebaseimagestreams",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CodebaseImageStreams",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"codebase_image_stream_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/codebaseimagestreams/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebaseimagestreams/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebaseimagestreams",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GerritProjects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"gerritProjectNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(gerritProjectNames)\r",
+							"pm.collectionVariables.set(\"gerrit_project_names\", gerritProjectNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/gerritprojects/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"gerritprojects",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GerritProjects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"gerrit_project_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/gerritprojects/' + name,\r",
+							"        method: 'PATCH',\r",
+							"        header: 'Content-Type:application/merge-patch+json',\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: '{\"metadata\":{\"finalizers\":null}}'\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/merge-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"metadata\":{\r\n        \"finalizers\":null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/gerritprojects/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"gerritprojects",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GerritProjects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"gerrit_project_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/gerritprojects/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/gerritprojects/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"gerritprojects",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JenkinsFolders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"jenkinsFolderNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(jenkinsFolderNames)\r",
+							"pm.collectionVariables.set(\"jenkins_folder_names\", jenkinsFolderNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/jenkinsfolders/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsfolders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JenkinsFolders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"jenkins_folder_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/jenkinsfolders/' + name,\r",
+							"        method: 'PATCH',\r",
+							"        header: 'Content-Type:application/merge-patch+json',\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: '{\"metadata\":{\"finalizers\":null}}'\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/merge-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"metadata\":{\r\n        \"finalizers\":null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/jenkinsfolders/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsfolders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JenkinsFolders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"jenkins_folder_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/jenkinsfolders/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/jenkinsfolders/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsfolders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CDPipelines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"cdPipelineNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(cdPipelineNames)\r",
+							"pm.collectionVariables.set(\"cd_pipeline_names\", cdPipelineNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/cdpipelines/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"cdpipelines",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CDPipelines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"cd_pipeline_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/cdpipelines/' + name,\r",
+							"        method: 'PATCH',\r",
+							"        header: 'Content-Type:application/merge-patch+json',\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: '{\"metadata\":{\"finalizers\":null}}'\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/merge-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"metadata\":{\r\n        \"finalizers\":null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/cdpipelines/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"cdpipelines",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CDPipelines",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"cd_pipeline_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/cdpipelines/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/cdpipelines/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"cdpipelines",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"bodyData = JSON.parse(responseBody);\r",
+							"stageNames = bodyData.items.map(function(element) { return element[\"metadata\"][\"name\"]; } );\r",
+							"\r",
+							"console.log(stageNames)\r",
+							"pm.collectionVariables.set(\"stage_names\", stageNames);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/stages/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"stages",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"stage_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/stages/' + name,\r",
+							"        method: 'PATCH',\r",
+							"        header: 'Content-Type:application/merge-patch+json',\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: '{\"metadata\":{\"finalizers\":null}}'\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/merge-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"metadata\":{\r\n        \"finalizers\":null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/stages/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"stages",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// If the variable is saved in array notation, you can parse the string to construct an array.\r",
+							"var names = pm.collectionVariables.get(\"stage_names\");\r",
+							"\r",
+							"_.forEach(names, (name) => {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'http://' + pm.environment.get('cluster_ip')  + ':' + pm.environment.get('cluster_port') + '/apis/v2.edp.epam.com/v1/namespaces/' + pm.environment.get('namespace') + '/stages/' + name,\r",
+							"        method: 'DELETE',\r",
+							"    }, function (err, res) {\r",
+							"        console.log(\"res=\", res);\r",
+							"    });\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/stages/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"stages",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

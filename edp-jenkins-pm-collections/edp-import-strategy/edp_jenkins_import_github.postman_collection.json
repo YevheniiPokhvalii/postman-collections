@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "2f77c2c3-76aa-48f2-927e-e2b272811fa5",
+		"name": "EDP Import strategy GitHUB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9427019"
+	},
+	"item": [
+		{
+			"name": "GitHUB Secret",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// var CryptoJS = require(\"crypto-js\");\r",
+							"\r",
+							"var plainText = pm.environment.get('github_ssh_private_key');\r",
+							"var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plainText + '\\n'));\r",
+							"pm.collectionVariables.set(\"github_ssh_private_key_base64\", encoded);\r",
+							"\r",
+							"var plainText = pm.environment.get('github_ssh_pub_key');\r",
+							"var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plainText + '\\n'));\r",
+							"pm.collectionVariables.set(\"github_ssh_pub_key_base64\", encoded);\r",
+							"\r",
+							"var plainText = pm.environment.get('github_user');\r",
+							"var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plainText + '\\n'));\r",
+							"pm.collectionVariables.set(\"github_user_base64\", encoded);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v1\r\ndata:\r\n  id_rsa: {{github_ssh_private_key_base64}}\r\n  id_rsa.pub: {{github_ssh_pub_key_base64}}\r\n  username: {{github_user_base64}}\r\nkind: Secret\r\nmetadata:\r\n  name: {{github_sshkey_name}}\r\n  namespace: {{namespace}}\r\ntype: Opaque"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/api/v1/namespaces/{{namespace}}/secrets/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"secrets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GitHUB Secret",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/api/v1/namespaces/{{namespace}}/secrets/github-sshkey",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"secrets",
+						"github-sshkey"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gitserver GitHUB",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1alpha1\r\nkind: GitServer\r\nmetadata:\r\n  name: {{github_host}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  createCodeReviewPipeline: false\r\n  gitHost: {{github_host}}\r\n  gitUser: git\r\n  httpsPort: 443\r\n  nameSshKeySecret: {{github_sshkey_name}}\r\n  sshPort: 22\r\n"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/gitservers/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"gitservers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gitserver GitHUB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/gitservers/github.com",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"gitservers",
+						"github.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "jenkinsserviceaccount GitHUB",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1alpha1\r\nkind: JenkinsServiceAccount\r\nmetadata:\r\n  name: {{github_sshkey_name}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  credentials: {{github_sshkey_name}}\r\n  ownerName: \"\"\r\n  type: ssh"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/jenkinsserviceaccounts/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsserviceaccounts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "jenkinsserviceaccount GitHUB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/jenkinsserviceaccounts/github-sshkey",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsserviceaccounts",
+						"github-sshkey"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

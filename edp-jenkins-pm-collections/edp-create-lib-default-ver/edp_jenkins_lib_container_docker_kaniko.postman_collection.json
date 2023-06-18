@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "4474ac2b-bf24-4eb2-a108-ebdf71ab0c6b",
+		"name": "EDP lib create Container-Docker kaniko jenkins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9427019"
+	},
+	"item": [
+		{
+			"name": "Container-Docker-kaniko-lib-cbranch",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let appType = \"library\";\r",
+							"let postmanPrefix = \"-pm-\";\r",
+							"let buildTool = \"kaniko\";\r",
+							"let programmingLang = \"container\";\r",
+							"let programmingLangFramework = \"docker\";\r",
+							"\r",
+							"let apps = pm.collectionVariables.get(\"apps\");\r",
+							"\r",
+							"if(!apps || apps.length == 0) {\r",
+							"    num = 100,\r",
+							"    apps = [...Array(num)].map((_,i) => ++i+\"\");\r",
+							"}\r",
+							"\r",
+							"let appTypeShort = appType.slice(0, 3);\r",
+							"let currentAppName = appTypeShort.concat(postmanPrefix.concat(apps.shift()));\r",
+							"pm.collectionVariables.set(\"edp_app_name\", currentAppName);\r",
+							"pm.collectionVariables.set(\"apps\", apps);\r",
+							"pm.collectionVariables.set(\"framework\", programmingLangFramework);\r",
+							"pm.collectionVariables.set(\"app_type\", appType);\r",
+							"pm.collectionVariables.set(\"build_tool\", buildTool);\r",
+							"pm.collectionVariables.set(\"branch_name\", \"master\");\r",
+							"\r",
+							"let buildToolCap = buildTool.charAt(0).toUpperCase() + buildTool.slice(1).toLowerCase();\r",
+							"pm.collectionVariables.set(\"build_tool_cap\", buildToolCap);\r",
+							"\r",
+							"pm.collectionVariables.set(\"programming_lang\", programmingLang);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1\r\nkind: CodebaseBranch\r\nmetadata:\r\n  name: {{framework}}-{{build_tool}}-{{edp_app_name}}-{{branch_name}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  branchName: {{branch_name}}\r\n  codebaseName: {{framework}}-{{build_tool}}-{{edp_app_name}}\r\n  fromCommit: ''\r\n  release: false\r\n"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Container-Docker-kaniko-lib-cbranch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/{{framework}}-{{build_tool}}-{{edp_app_name}}-{{branch_name}}",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						"{{framework}}-{{build_tool}}-{{edp_app_name}}-{{branch_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Container-Docker-kaniko-lib-codebase",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1\r\nkind: Codebase\r\nmetadata:\r\n  name: {{framework}}-{{build_tool}}-{{edp_app_name}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  buildTool: {{build_tool_cap}}\r\n  ciTool: Jenkins\r\n  defaultBranch: {{branch_name}}\r\n  emptyProject: false\r\n  framework: {{framework}}\r\n  gitServer: gerrit\r\n  jenkinsSlave: {{build_tool}}-{{framework}}\r\n  jiraIssueMetadataPayload: null\r\n  jobProvisioning: default\r\n  lang: {{programming_lang}}\r\n  strategy: create\r\n  ticketNamePattern: null\r\n  type: {{app_type}}\r\n  versioning:\r\n    type: default\r\n"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Container-Docker-kaniko-lib-codebase",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/{{framework}}-{{build_tool}}-{{edp_app_name}}",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						"{{framework}}-{{build_tool}}-{{edp_app_name}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

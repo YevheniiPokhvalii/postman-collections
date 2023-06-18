@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "238a86b6-1635-4d55-bb69-bac8fded7212",
+		"name": "EDP Import strategy GitLAB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9427019"
+	},
+	"item": [
+		{
+			"name": "GitLAB Secret",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// var CryptoJS = require(\"crypto-js\");\r",
+							"\r",
+							"var plainText = pm.environment.get('gitlab_ssh_private_key');\r",
+							"var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plainText + '\\n'));\r",
+							"pm.collectionVariables.set(\"gitlab_ssh_private_key_base64\", encoded);\r",
+							"\r",
+							"var plainText = pm.environment.get('gitlab_ssh_pub_key');\r",
+							"var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plainText + '\\n'));\r",
+							"pm.collectionVariables.set(\"gitlab_ssh_pub_key_base64\", encoded);\r",
+							"\r",
+							"var plainText = pm.environment.get('gitlab_user');\r",
+							"var encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(plainText + '\\n'));\r",
+							"pm.collectionVariables.set(\"gitlab_user_base64\", encoded);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v1\r\ndata:\r\n  id_rsa: {{gitlab_ssh_private_key_base64}}\r\n  id_rsa.pub: {{gitlab_ssh_pub_key_base64}}\r\n  username: {{gitlab_user_base64}}\r\nkind: Secret\r\nmetadata:\r\n  name: {{gitlab_sshkey_name}}\r\n  namespace: {{namespace}}\r\ntype: Opaque"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/api/v1/namespaces/{{namespace}}/secrets/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"secrets",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GitLAB Secret",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/api/v1/namespaces/{{namespace}}/secrets/gitlab-sshkey",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"secrets",
+						"gitlab-sshkey"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gitserver GitLAB",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1alpha1\r\nkind: GitServer\r\nmetadata:\r\n  name: {{gitlab_host}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  createCodeReviewPipeline: false\r\n  gitHost: {{gitlab_host}}\r\n  gitUser: git\r\n  httpsPort: 443\r\n  nameSshKeySecret: {{gitlab_sshkey_name}}\r\n  sshPort: 22\r\n"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/gitservers/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"gitservers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gitserver GitLAB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/gitservers/gitlab.com",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"gitservers",
+						"gitlab.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "jenkinsserviceaccount GitLAB",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1alpha1\r\nkind: JenkinsServiceAccount\r\nmetadata:\r\n  name: {{gitlab_sshkey_name}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  credentials: {{gitlab_sshkey_name}}\r\n  ownerName: \"\"\r\n  type: ssh"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/jenkinsserviceaccounts/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsserviceaccounts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "jenkinsserviceaccount GitLAB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1alpha1/namespaces/{{namespace}}/jenkinsserviceaccounts/gitlab-sshkey",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1alpha1",
+						"namespaces",
+						"{{namespace}}",
+						"jenkinsserviceaccounts",
+						"gitlab-sshkey"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

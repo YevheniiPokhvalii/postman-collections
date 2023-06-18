@@ -1,0 +1,210 @@
+{
+	"info": {
+		"_postman_id": "34a13903-3470-4121-842e-7c7c89a7a844",
+		"name": "EDP app create Java11 gradle jenkins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9427019"
+	},
+	"item": [
+		{
+			"name": "Java11-Gradle-app-cbranch",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let appType = \"application\";\r",
+							"let postmanPrefix = \"-pm-\";\r",
+							"let buildTool = \"gradle\";\r",
+							"let programmingLang = \"java\";\r",
+							"let programmingLangVersion = \"11\";\r",
+							"let langFramework = programmingLang.concat(programmingLangVersion);\r",
+							"\r",
+							"let apps = pm.collectionVariables.get(\"apps\");\r",
+							"\r",
+							"if(!apps || apps.length == 0) {\r",
+							"    num = 100,\r",
+							"    apps = [...Array(num)].map((_,i) => ++i+\"\");\r",
+							"}\r",
+							"\r",
+							"let appTypeShort = appType.slice(0, 3);\r",
+							"let currentAppName = appTypeShort.concat(postmanPrefix.concat(apps.shift()));\r",
+							"pm.collectionVariables.set(\"edp_app_name\", currentAppName);\r",
+							"pm.collectionVariables.set(\"apps\", apps);\r",
+							"pm.collectionVariables.set(\"framework\", langFramework);\r",
+							"pm.collectionVariables.set(\"build_tool\", buildTool);\r",
+							"pm.collectionVariables.set(\"app_type\", appType);\r",
+							"pm.collectionVariables.set(\"branch_name\", \"master\");\r",
+							"\r",
+							"let buildToolCap = buildTool.charAt(0).toUpperCase() + buildTool.slice(1).toLowerCase();\r",
+							"pm.collectionVariables.set(\"build_tool_cap\", buildToolCap);\r",
+							"\r",
+							"let programmingLangCap = programmingLang.charAt(0).toUpperCase() + programmingLang.slice(1).toLowerCase();\r",
+							"pm.collectionVariables.set(\"lang_cap\", programmingLangCap);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1\r\nkind: CodebaseBranch\r\nmetadata:\r\n  name: {{framework}}-{{build_tool}}-{{edp_app_name}}-{{branch_name}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  branchName: {{branch_name}}\r\n  codebaseName: {{framework}}-{{build_tool}}-{{edp_app_name}}\r\n  fromCommit: ''\r\n  release: false\r\n"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Java11-Gradle-app-cbranch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebasebranches/{{framework}}-{{build_tool}}-{{edp_app_name}}-{{branch_name}}",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebasebranches",
+						"{{framework}}-{{build_tool}}-{{edp_app_name}}-{{branch_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Java11-Gradle-app-codebase",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/yaml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "apiVersion: v2.edp.epam.com/v1\r\nkind: Codebase\r\nmetadata:\r\n  name: {{framework}}-{{build_tool}}-{{edp_app_name}}\r\n  namespace: {{namespace}}\r\nspec:\r\n  buildTool: {{build_tool_cap}}\r\n  ciTool: Jenkins\r\n  defaultBranch: {{branch_name}}\r\n  deploymentScript: helm-chart\r\n  emptyProject: false\r\n  framework: {{framework}}\r\n  gitServer: gerrit\r\n  jenkinsSlave: {{build_tool}}-{{framework}}\r\n  jiraIssueMetadataPayload: null\r\n  jobProvisioning: default\r\n  lang: {{lang_cap}}\r\n  strategy: create\r\n  ticketNamePattern: null\r\n  type: {{app_type}}\r\n  versioning:\r\n    type: default\r\n"
+				},
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Java11-Gradle-app-codebase",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{cluster_name}}/apis/v2.edp.epam.com/v1/namespaces/{{namespace}}/codebases/{{framework}}-{{build_tool}}-{{edp_app_name}}",
+					"protocol": "http",
+					"host": [
+						"{{cluster_name}}"
+					],
+					"path": [
+						"apis",
+						"v2.edp.epam.com",
+						"v1",
+						"namespaces",
+						"{{namespace}}",
+						"codebases",
+						"{{framework}}-{{build_tool}}-{{edp_app_name}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
